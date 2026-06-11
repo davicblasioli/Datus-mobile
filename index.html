@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0066cc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DATUS Saúde">
+<meta name="description" content="Seu portal de saúde digital — consultas, exames e receitas na palma da mão">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>DATUS · Portal do Paciente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS — herdados do sistema DATUS original
+══════════════════════════════════════════════════ */
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f1923;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --primary: #0066cc;
+  --primary-light: #e8f1fb;
+  --primary-dark: #004fa3;
+  --green: #059669;
+  --green-light: #d1fae5;
+  --orange: #ea580c;
+  --orange-light: #fff0e8;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --yellow: #d97706;
+  --yellow-light: #fef3c7;
+  --teal: #0891b2;
+  --teal-light: #e0f7fa;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.09), 0 16px 40px rgba(0,0,0,0.07);
+  --nav-h: 68px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ══ RESET & BASE ══ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.55;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════════════════
+   TELA DE ENTRADA — Nome do Paciente
+══════════════════════════════════════════════════ */
+#landing {
+  position: fixed; inset: 0;
+  background: linear-gradient(145deg, #0a1628 0%, #0f2042 45%, #0d3068 100%);
+  z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+#landing::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(0,102,204,0.18) 0%, transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(8,145,178,0.12) 0%, transparent 45%),
+    radial-gradient(circle at 55% 85%, rgba(5,150,105,0.1) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.landing-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridDrift 30s linear infinite;
+  pointer-events: none;
+}
+@keyframes gridDrift { 0%{background-position:0 0} 100%{background-position:48px 48px} }
+
+.landing-inner {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 380px;
+  text-align: center;
+  animation: fadeUp 0.6s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+.landing-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+  margin-bottom: 1rem;
+}
+
+.landing-logo {
+  font-size: clamp(3.5rem, 14vw, 5.5rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4rem;
+}
+.landing-logo span {
+  background: linear-gradient(135deg, #60b3ff, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.42);
+  font-weight: 400;
+  margin-bottom: 3rem;
+}
+
+/* ── CARD DE ENTRADA ── */
+.entry-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 2rem 1.8rem 2.2rem;
+  text-align: left;
+}
+
+.entry-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.entry-desc {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 1.4rem;
+  line-height: 1.6;
+}
+
+.entry-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 0.55rem;
+  display: block;
+}
+
+.entry-input {
+  width: 100%;
+  background: rgba(255,255,255,0.09);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  margin-bottom: 1.2rem;
+}
+.entry-input::placeholder { color: rgba(255,255,255,0.28); }
+.entry-input:focus {
+  border-color: rgba(96,179,255,0.7);
+  box-shadow: 0 0 0 3px rgba(96,179,255,0.15);
+  background: rgba(255,255,255,0.12);
+}
+
+.entry-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #0066cc, #0891b2);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.23,1,0.32,1);
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.entry-btn:hover, .entry-btn:active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,102,204,0.4);
+}
+.entry-btn:disabled { opacity: 0.45; transform: none; box-shadow: none; cursor: not-allowed; }
+
+.entry-privacy {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ══════════════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════════════ */
+#app {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+#app.visible { display: flex; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.25rem;
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(58px + env(safe-area-inset-top, 0px));
+  display: flex; align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  z-index: 50;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+.topbar-logo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.topbar-logo span {
+  color: var(--text3);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.topbar-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.7rem;
+  border-radius: 100px;
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 0.4rem; }
+
+.topbar-notif {
+  width: 38px; height: 38px;
+  border: none; background: none; cursor: pointer;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text2);
+  position: relative;
+  transition: background 0.2s;
+}
+.topbar-notif:hover, .topbar-notif:active { background: var(--bg); }
+.notif-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 1.5px solid var(--surface);
+}
+
+.topbar-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+/* ── SCROLL AREA ── */
+.app-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 1rem);
+}
+
+/* ══════════════════════════════════════════════════
+   VIEWS (PÁGINAS)
+══════════════════════════════════════════════════ */
+.view { display: none; animation: viewIn 0.28s ease both; }
+.view.active { display: block; }
+@keyframes viewIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.view-pad { padding: 1.25rem 1.1rem; }
+
+/* ══ HOME ══ */
+.home-header {
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  margin: 0;
+  padding: 1.6rem 1.25rem 1.8rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.home-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+}
+.home-header::after {
+  content: '';
+  position: absolute;
+  bottom: -55px; right: 15px;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+.home-greeting { font-size: 0.8rem; opacity: 0.72; margin-bottom: 0.15rem; font-weight: 400; }
+.home-name {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  position: relative; z-index: 1;
+}
+
+.next-card {
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex; align-items: center; gap: 0.8rem;
+  position: relative; z-index: 1;
+}
+.next-icon { font-size: 1.3rem; flex-shrink: 0; }
+.next-label { font-size: 0.65rem; opacity: 0.68; font-weight: 400; }
+.next-value { font-size: 0.88rem; font-weight: 700; margin-top: 0.05rem; }
+
+.home-body { padding: 1.25rem 1.1rem; }
+
+/* Quick Actions */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 1.4rem;
+}
+.quick-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem 0.4rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-btn:active { background: var(--primary-light); border-color: rgba(0,102,204,0.25); transform: scale(0.96); }
+.quick-icon { font-size: 1.5rem; }
+.quick-label { font-size: 0.6rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.3; }
+
+/* Alert banner */
+.alert-banner {
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+}
+.alert-banner.blue { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.alert-banner.green { background: var(--green-light); border-left: 3px solid var(--green); }
+.alert-banner.orange { background: var(--orange-light); border-left: 3px solid var(--orange); }
+.alert-banner.red { background: var(--red-light); border-left: 3px solid var(--red); }
+.alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+.alert-text { flex: 1; line-height: 1.5; }
+.alert-text strong { display: block; font-weight: 700; margin-bottom: 0.1rem; font-size: 0.84rem; }
+
+/* ══════════════════════════════════════════════════
+   SHARED COMPONENTS
+══════════════════════════════════════════════════ */
+
+/* Card */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.card-header {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.card-body { padding: 1rem 1.2rem; }
+.card-body.slim { padding: 0.5rem 0; }
+
+/* Section header */
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.section-title { font-size: 0.82rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; }
+.section-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: none; border: none; cursor: pointer;
+  padding: 0;
+}
+
+/* Page Title */
+.page-header { padding: 1.4rem 1.1rem 0.8rem; }
+.page-title { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+.page-sub { font-size: 0.78rem; color: var(--text3); margin-top: 0.15rem; font-weight: 400; }
+
+/* Tags/Badges */
+.tag {
+  display: inline-flex; align-items: center;
+  font-size: 0.65rem; font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.tag-green { background: var(--green-light); color: var(--green); }
+.tag-blue { background: var(--primary-light); color: var(--primary); }
+.tag-orange { background: var(--orange-light); color: var(--orange); }
+.tag-red { background: var(--red-light); color: var(--red); }
+.tag-yellow { background: var(--yellow-light); color: var(--yellow); }
+.tag-gray { background: var(--bg); color: var(--text2); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  border: none; cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { background: var(--primary-dark); transform: scale(0.97); }
+.btn-ghost { background: var(--surface); color: var(--text2); border: 1.5px solid var(--border); }
+.btn-ghost:active { background: var(--bg); }
+.btn-full { width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem; border-radius: 12px; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:active { background: #047857; }
+
+/* Agenda Items */
+.agenda-row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.85rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.agenda-row:last-child { border-bottom: none; }
+.agenda-row:active { background: var(--bg); }
+.agenda-time {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 44px;
+  text-align: center;
+  background: var(--primary-light);
+  border-radius: 8px;
+  padding: 0.35rem 0.4rem;
+  flex-shrink: 0;
+}
+.agenda-bar { width: 3px; height: 38px; border-radius: 2px; flex-shrink: 0; }
+.agenda-info { flex: 1; min-width: 0; }
+.agenda-name { font-size: 0.88rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agenda-detail { font-size: 0.73rem; color: var(--text3); margin-top: 0.1rem; font-weight: 400; }
+.agenda-end { flex-shrink: 0; }
+
+/* Patient row (medication etc.) */
+.med-row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.85rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.med-row:last-child { border-bottom: none; }
+.med-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.med-info { flex: 1; }
+.med-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.med-dose { font-size: 0.73rem; color: var(--text3); margin-top: 0.1rem; }
+
+/* Progress bar */
+.progress { background: var(--border); border-radius: 100px; height: 5px; overflow: hidden; margin-top: 0.4rem; }
+.progress-fill { height: 100%; border-radius: 100px; background: var(--primary); transition: width 0.5s ease; }
+
+/* Form elements */
+.form-group { margin-bottom: 1.1rem; }
+.form-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+  margin-bottom: 0.5rem;
+}
+.form-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.1); background: var(--surface); }
+.form-select {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+.form-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  resize: vertical;
+  min-height: 90px;
+  transition: border-color 0.2s;
+}
+.form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.1); }
+
+/* Time slots */
+.time-slots { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.time-slot {
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.time-slot.active, .time-slot:active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* Receita card */
+.receita-card {
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.receita-strip {
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1.1rem;
+}
+.receita-logo { font-size: 0.88rem; font-weight: 700; }
+.receita-num { font-size: 0.6rem; opacity: 0.7; }
+.receita-field { margin-bottom: 0.75rem; }
+.receita-lbl {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 0.2rem;
+}
+.receita-val { font-size: 0.88rem; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.35rem; }
+.receita-med-row {
+  background: var(--primary-light);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  display: flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 0.6rem;
+}
+.receita-med-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.receita-med-dose { font-size: 0.72rem; color: var(--text2); margin-top: 0.1rem; }
+.receita-valid {
+  margin-top: 0.8rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--green-light);
+  border-radius: 8px;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.72rem; color: var(--green); font-weight: 700;
+}
+
+/* Prontuário */
+.info-row {
+  display: flex; align-items: flex-start;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  gap: 0.8rem;
+}
+.info-row:last-child { border-bottom: none; }
+.info-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.info-key { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.2rem; }
+.info-val { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+
+/* Timeline */
+.tl { display: flex; flex-direction: column; }
+.tl-item { display: flex; gap: 0.9rem; padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); }
+.tl-item:last-child { border-bottom: none; }
+.tl-dot-col { display: flex; flex-direction: column; align-items: center; width: 14px; flex-shrink: 0; padding-top: 3px; }
+.tl-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.tl-dot.blue { background: var(--primary); box-shadow: 0 0 0 3px rgba(0,102,204,0.15); }
+.tl-dot.green { background: var(--green); box-shadow: 0 0 0 3px rgba(5,150,105,0.15); }
+.tl-dot.orange { background: var(--orange); box-shadow: 0 0 0 3px rgba(234,88,12,0.15); }
+.tl-line { width: 1px; flex: 1; background: var(--border); margin-top: 5px; min-height: 20px; }
+.tl-content { flex: 1; padding-bottom: 0.3rem; }
+.tl-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.tl-sub { font-size: 0.75rem; color: var(--text2); margin-top: 0.15rem; }
+.tl-date { font-size: 0.65rem; color: var(--text3); margin-top: 0.25rem; font-weight: 400; }
+
+/* Notifications */
+.notif-item {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:active { background: var(--bg); }
+.notif-item.unread { background: var(--primary-light); }
+.notif-item.unread:active { background: #d4e8f8; }
+.notif-ava {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.notif-ava.blue { background: var(--primary-light); }
+.notif-ava.green { background: var(--green-light); }
+.notif-ava.orange { background: var(--orange-light); }
+.notif-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.notif-sub { font-size: 0.75rem; color: var(--text2); margin-top: 0.1rem; line-height: 1.45; }
+.notif-time { font-size: 0.62rem; color: var(--text3); margin-top: 0.25rem; }
+
+/* Perfil */
+.profile-hero {
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  padding: 2rem 1.25rem 2.5rem;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+.profile-avatar-wrap {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 auto 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.profile-name { font-size: 1.3rem; font-weight: 700; }
+.profile-pron { font-size: 0.75rem; opacity: 0.65; margin-top: 0.2rem; font-weight: 400; }
+
+/* ══════════════════════════════════════════════════
+   BOTTOM NAVIGATION
+══════════════════════════════════════════════════ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: flex-start;
+  padding-bottom: var(--safe-bottom);
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.07);
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.25rem;
+  cursor: pointer;
+  background: none; border: none;
+  transition: all 0.2s;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-icon { font-size: 1.3rem; transition: transform 0.2s; }
+.nav-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text3);
+  transition: color 0.2s;
+}
+.nav-item.active .nav-label { color: var(--primary); }
+.nav-item.active .nav-icon { transform: scale(1.15); }
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 4px 4px;
+}
+.nav-badge {
+  position: absolute;
+  top: 8px; right: calc(50% - 16px);
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+
+/* ══════════════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10,22,40,0.6);
+  z-index: 500;
+  align-items: flex-end;
+  padding: 0;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; animation: overlayIn 0.25s ease; }
+@keyframes overlayIn { from{opacity:0} to{opacity:1} }
+
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(1.5rem + var(--safe-bottom));
+  animation: sheetUp 0.3s cubic-bezier(0.23,1,0.32,1);
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 100px;
+  margin: 0.8rem auto 0;
+}
+.sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.sheet-title { font-size: 1.05rem; font-weight: 700; }
+.sheet-close {
+  width: 32px; height: 32px;
+  border: none; background: var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+}
+.sheet-body { padding: 1.25rem; }
+
+/* ══════════════════════════════════════════════════
+   INSTALL PROMPT
+══════════════════════════════════════════════════ */
+.install-bar {
+  position: fixed;
+  top: calc(58px + env(safe-area-inset-top, 0px));
+  left: 0; right: 0;
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  color: #fff;
+  padding: 0.7rem 1.1rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  z-index: 200;
+  animation: slideDown 0.4s ease;
+  box-shadow: 0 4px 16px rgba(0,102,204,0.35);
+}
+@keyframes slideDown { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
+.install-bar.hidden { display: none; }
+.install-icon { font-size: 1.2rem; flex-shrink: 0; }
+.install-text { flex: 1; font-size: 0.8rem; font-weight: 500; }
+.install-text strong { display: block; font-weight: 700; font-size: 0.85rem; }
+.install-btn {
+  background: #fff;
+  color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.install-close {
+  background: none; border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+#toast-container {
+  position: fixed;
+  top: 1rem; left: 1rem; right: 1rem;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  pointer-events: none;
+}
+.toast {
+  background: var(--text);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  display: flex; align-items: center; gap: 0.7rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  animation: toastIn 0.3s cubic-bezier(0.23,1,0.32,1);
+  pointer-events: all;
+  border-left: 3px solid #fff;
+}
+.toast.green { border-left-color: var(--green); }
+.toast.blue { border-left-color: var(--primary); }
+.toast.orange { border-left-color: var(--orange); }
+@keyframes toastIn { from{opacity:0;transform:translateY(-15px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+.toast-icon { font-size: 1rem; flex-shrink: 0; }
+.toast-text { font-size: 0.82rem; flex: 1; }
+.toast-text strong { display: block; font-weight: 700; }
+.toast-close {
+  background: none; border: none;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer; font-size: 0.9rem;
+  pointer-events: all;
+}
+
+/* ══════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════ */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 1rem; }
+.text-center { text-align: center; }
+.text-muted { color: var(--text3); font-size: 0.78rem; }
+.divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
+.chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.72rem; font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 100px;
+  padding: 0.3rem 0.75rem;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text3);
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5; }
+.empty-title { font-size: 0.95rem; font-weight: 700; color: var(--text2); margin-bottom: 0.4rem; }
+.empty-sub { font-size: 0.78rem; }
+
+/* ══ RESPONSIVE ══ */
+@media (min-width: 600px) {
+  .app-scroll { max-width: 480px; margin: 0 auto; }
+  .home-header { border-radius: 0 0 20px 20px; }
+  .bottom-nav { max-width: 480px; margin: 0 auto; left: 50%; transform: translateX(-50%); border-radius: 20px 20px 0 0; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+}
+
+@media (prefers-color-scheme: dark) {
+  /* deixar para futura versão */
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     TELA DE ENTRADA
+══════════════════════════════════════════════════ -->
+<div id="landing">
+  <div class="landing-grid"></div>
+  <div class="landing-inner">
+    <div class="landing-eyebrow">VALEN · Sistema de Saúde</div>
+    <div class="landing-logo">DA<span>TUS</span></div>
+    <div class="landing-sub">Seu portal de saúde digital</div>
+
+    <div class="entry-card">
+      <div class="entry-title">👋 Bem-vindo(a)!</div>
+      <div class="entry-desc">Informe seu nome para personalizar seu portal de saúde e acessar consultas, exames e receitas.</div>
+
+      <label class="entry-label" for="nomeInput">Seu nome</label>
+      <input
+        type="text"
+        id="nomeInput"
+        class="entry-input"
+        placeholder="Ex: Maria Fernanda"
+        autocomplete="given-name"
+        autocapitalize="words"
+        maxlength="60"
+        oninput="validateEntry()"
+        onkeydown="if(event.key==='Enter') enterApp()"
+        autofocus
+      >
+
+      <button class="entry-btn" id="entryBtn" onclick="enterApp()" disabled>
+        <span>Acessar meu portal</span>
+        <span>→</span>
+      </button>
+
+      <div class="entry-privacy">🔒 Seus dados ficam apenas neste dispositivo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     BARRA DE INSTALAÇÃO PWA
+══════════════════════════════════════════════════ -->
+<div class="install-bar hidden" id="installBar">
+  <div class="install-icon">📱</div>
+  <div class="install-text">
+    <strong>Instalar DATUS Saúde</strong>
+    Acesso rápido sem abrir o navegador
+  </div>
+  <button class="install-btn" onclick="installPWA()">Instalar</button>
+  <button class="install-close" onclick="dismissInstall()">✕</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     APP PRINCIPAL
+══════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">DATUS <span>saúde</span></div>
+    <span class="topbar-badge" id="topBadge">Paciente</span>
+    <div class="topbar-right">
+      <button class="topbar-notif" onclick="showView('notificacoes')" title="Notificações">
+        🔔
+        <span class="notif-dot" id="notifDot"></span>
+      </button>
+      <div class="topbar-avatar" id="topAvatar" onclick="showView('perfil')">?</div>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="app-scroll" id="appScroll">
+
+    <!-- ══ VIEW: HOME ══ -->
+    <div class="view active" id="view-home">
+      <div class="home-header">
+        <div class="home-greeting" id="homeGreeting">Bom dia,</div>
+        <div class="home-name" id="homeName">—</div>
+        <div class="next-card">
+          <div class="next-icon">📅</div>
+          <div>
+            <div class="next-label">Próxima consulta</div>
+            <div class="next-value">Hoje às 09:00 · Pré-natal · UBS Centro</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-body">
+        <!-- Quick Actions -->
+        <div class="section-head" style="margin-bottom:0.65rem">
+          <div class="section-title">Atalhos</div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-btn" onclick="showView('consultas')">
+            <div class="quick-icon">📅</div>
+            <div class="quick-label">Consultas</div>
+          </div>
+          <div class="quick-btn" onclick="showView('exames')">
+            <div class="quick-icon">🧪</div>
+            <div class="quick-label">Exames</div>
+          </div>
+          <div class="quick-btn" onclick="showView('receitas')">
+            <div class="quick-icon">💊</div>
+            <div class="quick-label">Receitas</div>
+          </div>
+          <div class="quick-btn" onclick="showView('prontuario')">
+            <div class="quick-icon">📁</div>
+            <div class="quick-label">Prontuário</div>
+          </div>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert-banner blue">
+          <span class="alert-icon">🔔</span>
+          <div class="alert-text">
+            <strong>Lembrete</strong>
+            Consulta de pré-natal hoje às 09:00 na UBS Centro. Lembre-se de trazer a carteirinha.
+          </div>
+        </div>
+
+        <!-- Consultas -->
+        <div class="section-head">
+          <div class="section-title">Próximas consultas</div>
+          <button class="section-link" onclick="showView('consultas')">Ver todas</button>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="agenda-row" onclick="openSheet('consultaSheet')">
+            <div class="agenda-time">09:00</div>
+            <div class="agenda-bar" style="background:var(--orange)"></div>
+            <div class="agenda-info">
+              <div class="agenda-name">Pré-natal · 28 semanas</div>
+              <div class="agenda-detail">UBS Centro · Dr. Silva</div>
+            </div>
+            <span class="tag tag-orange">Hoje</span>
+          </div>
+          <div class="agenda-row">
+            <div class="agenda-time" style="background:var(--green-light);color:var(--green)">Jun</div>
+            <div class="agenda-bar" style="background:var(--green)"></div>
+            <div class="agenda-info">
+              <div class="agenda-name">Retorno · 32 semanas</div>
+              <div class="agenda-detail">UBS Centro · Dr. Silva</div>
+            </div>
+            <span class="tag tag-green">Agendado</span>
+          </div>
+        </div>
+
+        <!-- Medicamentos -->
+        <div class="section-head">
+          <div class="section-title">Medicamentos ativos</div>
+          <button class="section-link" onclick="showView('receitas')">Ver receitas</button>
+        </div>
+        <div class="card">
+          <div class="med-row">
+            <div class="med-icon">💊</div>
+            <div class="med-info">
+              <div class="med-name">Sulfato Ferroso 40mg</div>
+              <div class="med-dose">1 comprimido ao dia · Após almoço</div>
+            </div>
+            <span class="tag tag-green">Ativo</span>
+          </div>
+          <div class="med-row">
+            <div class="med-icon">💊</div>
+            <div class="med-info">
+              <div class="med-name">Ácido Fólico 5mg</div>
+              <div class="med-dose">1 comprimido ao dia · Em jejum</div>
+            </div>
+            <span class="tag tag-green">Ativo</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-home -->
+
+    <!-- ══ VIEW: CONSULTAS ══ -->
+    <div class="view" id="view-consultas">
+      <div class="page-header">
+        <div class="page-title">📅 Consultas</div>
+        <div class="page-sub">Histórico e agendamentos</div>
+      </div>
+      <div class="view-pad" style="padding-top:0">
+
+        <div class="alert-banner orange" style="margin-bottom:1rem">
+          <span class="alert-icon">⏰</span>
+          <div class="alert-text"><strong>Hoje às 09:00</strong>Pré-natal · UBS Centro · Dr. Marcos Silva</div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Agendadas</div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="agenda-row" onclick="openSheet('consultaSheet')">
+            <div class="agenda-time">09:00</div>
+            <div class="agenda-bar" style="background:var(--orange)"></div>
+            <div class="agenda-info">
+              <div class="agenda-name">Pré-natal · 28 semanas</div>
+              <div class="agenda-detail">Hoje · UBS Centro · Dr. Marcos Silva</div>
+            </div>
+            <span class="tag tag-orange">Hoje</span>
+          </div>
+          <div class="agenda-row" onclick="openSheet('consultaSheet')">
+            <div class="agenda-time" style="background:var(--green-light);color:var(--green)">Jun</div>
+            <div class="agenda-bar" style="background:var(--green)"></div>
+            <div class="agenda-info">
+              <div class="agenda-name">Retorno · 32 semanas</div>
+              <div class="agenda-detail">05/06/2026 · UBS Centro · Dr. Marcos Silva</div>
+            </div>
+            <span class="tag tag-green">Confirmado</span>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Histórico</div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="tl">
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot blue"></div><div class="tl-line"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Pré-natal · 24 semanas</div>
+                <div class="tl-sub">UBS Centro · Dr. Marcos Silva</div>
+                <div class="tl-date">15/05/2026</div>
+              </div>
+              <span class="tag tag-green">Realizada</span>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot green"></div><div class="tl-line"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Pré-natal · 20 semanas</div>
+                <div class="tl-sub">UBS Centro · Dr. Marcos Silva</div>
+                <div class="tl-date">10/04/2026</div>
+              </div>
+              <span class="tag tag-green">Realizada</span>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot orange"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Consulta Geral</div>
+                <div class="tl-sub">UBS Centro · Dr. Alves</div>
+                <div class="tl-date">01/03/2026</div>
+              </div>
+              <span class="tag tag-green">Realizada</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full" onclick="openSheet('agendarSheet')">
+          ➕ Nova Consulta
+        </button>
+      </div>
+    </div><!-- /view-consultas -->
+
+    <!-- ══ VIEW: EXAMES ══ -->
+    <div class="view" id="view-exames">
+      <div class="page-header">
+        <div class="page-title">🧪 Exames</div>
+        <div class="page-sub">Resultados disponíveis digitalmente</div>
+      </div>
+      <div class="view-pad" style="padding-top:0">
+
+        <div class="alert-banner green" style="margin-bottom:1rem">
+          <span class="alert-icon">✅</span>
+          <div class="alert-text"><strong>Novo resultado disponível</strong>Hemograma completo · 27/05/2026</div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Disponíveis</div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="agenda-row" onclick="openSheet('exameSheet')">
+            <div class="med-icon" style="background:var(--green-light)">🧪</div>
+            <div class="agenda-info">
+              <div class="agenda-name">Hemograma Completo</div>
+              <div class="agenda-detail">Solicitado em 20/05/2026</div>
+            </div>
+            <div style="text-align:right">
+              <span class="tag tag-green" style="margin-bottom:0.3rem;display:block">Disponível</span>
+              <span style="font-size:0.65rem;color:var(--text3)">27/05</span>
+            </div>
+          </div>
+          <div class="agenda-row" onclick="openSheet('exameSheet')">
+            <div class="med-icon" style="background:var(--green-light)">🧪</div>
+            <div class="agenda-info">
+              <div class="agenda-name">Ultrassom Obstétrico</div>
+              <div class="agenda-detail">Solicitado em 10/05/2026</div>
+            </div>
+            <div style="text-align:right">
+              <span class="tag tag-green" style="margin-bottom:0.3rem;display:block">Disponível</span>
+              <span style="font-size:0.65rem;color:var(--text3)">15/05</span>
+            </div>
+          </div>
+          <div class="agenda-row" onclick="openSheet('exameSheet')">
+            <div class="med-icon" style="background:var(--green-light)">🧪</div>
+            <div class="agenda-info">
+              <div class="agenda-name">Glicemia em Jejum</div>
+              <div class="agenda-detail">Solicitado em 10/05/2026</div>
+            </div>
+            <div style="text-align:right">
+              <span class="tag tag-green" style="margin-bottom:0.3rem;display:block">Disponível</span>
+              <span style="font-size:0.65rem;color:var(--text3)">15/05</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Agendados / Pendentes</div>
+        </div>
+        <div class="card">
+          <div class="agenda-row">
+            <div class="med-icon" style="background:var(--yellow-light)">🧪</div>
+            <div class="agenda-info">
+              <div class="agenda-name">TSH / T4 Livre</div>
+              <div class="agenda-detail">Aguardando realização</div>
+            </div>
+            <span class="tag tag-yellow">Agendado</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-exames -->
+
+    <!-- ══ VIEW: RECEITAS ══ -->
+    <div class="view" id="view-receitas">
+      <div class="page-header">
+        <div class="page-title">💊 Receitas</div>
+        <div class="page-sub" id="receitasSubtitle">Prescrições médicas</div>
+      </div>
+      <div class="view-pad" style="padding-top:0">
+
+        <!-- Receita ativa -->
+        <div class="section-head"><div class="section-title">Receita ativa</div></div>
+        <div class="receita-card">
+          <div class="receita-strip">
+            <div>
+              <div class="receita-logo">DATUS · VALEN</div>
+              <div style="font-size:0.6rem;opacity:0.7">UBS Centro — São Paulo/SP</div>
+            </div>
+            <div class="receita-num">RX #20260525-0302</div>
+          </div>
+          <div class="receita-field">
+            <div class="receita-lbl">Paciente</div>
+            <div class="receita-val" id="receitaPaciente">—</div>
+          </div>
+          <div class="receita-med-row">
+            <div style="font-size:1.2rem">💊</div>
+            <div>
+              <div class="receita-med-name">Sulfato Ferroso 40mg</div>
+              <div class="receita-med-dose">1 comp/dia após almoço · 90 dias</div>
+            </div>
+          </div>
+          <div class="receita-med-row">
+            <div style="font-size:1.2rem">💊</div>
+            <div>
+              <div class="receita-med-name">Ácido Fólico 5mg</div>
+              <div class="receita-med-dose">1 comp/dia em jejum · 90 dias</div>
+            </div>
+          </div>
+          <div class="receita-field" style="margin-top:0.5rem">
+            <div class="receita-lbl">Médico responsável</div>
+            <div class="receita-val">Dr. Marcos Silva · CRM-SP 789012</div>
+          </div>
+          <div class="receita-valid">
+            <span>✅</span>
+            <span>Receita digital válida · Assinatura eletrônica verificada</span>
+          </div>
+          <button class="btn btn-primary btn-full" style="margin-top:1rem" onclick="showToast('📄 Receita salva!', 'Você pode compartilhar ou imprimir', 'blue')">
+            📥 Baixar / Compartilhar
+          </button>
+        </div>
+
+        <!-- Histórico -->
+        <div class="section-head" style="margin-top:0.5rem"><div class="section-title">Histórico</div></div>
+        <div class="card">
+          <div class="agenda-row" onclick="openSheet('receitaAntigaSheet')">
+            <div class="med-icon">💊</div>
+            <div class="agenda-info">
+              <div class="agenda-name">Sulfato Ferroso + Ácido Fólico</div>
+              <div class="agenda-detail">Emitida em 25/05/2026 · Dr. Marcos Silva</div>
+            </div>
+            <span class="tag tag-green">Ativa</span>
+          </div>
+          <div class="agenda-row" onclick="openSheet('receitaAntigaSheet')">
+            <div class="med-icon">💊</div>
+            <div class="agenda-info">
+              <div class="agenda-name">Vitamina D 1000UI</div>
+              <div class="agenda-detail">Emitida em 10/03/2026 · Dr. Alves</div>
+            </div>
+            <span class="tag tag-gray">Encerrada</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-receitas -->
+
+    <!-- ══ VIEW: PRONTUÁRIO ══ -->
+    <div class="view" id="view-prontuario">
+      <div class="page-header">
+        <div class="page-title">📁 Prontuário</div>
+        <div class="page-sub" id="prontuarioSubtitle">Informações de saúde</div>
+      </div>
+      <div class="view-pad" style="padding-top:0">
+
+        <!-- Info pessoal -->
+        <div class="section-head"><div class="section-title">Dados pessoais</div></div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="info-row">
+            <div class="info-icon">👤</div>
+            <div>
+              <div class="info-key">Nome completo</div>
+              <div class="info-val" id="prontuarioNome">—</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">🩸</div>
+            <div>
+              <div class="info-key">Tipo sanguíneo</div>
+              <div class="info-val">A+</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">⚠️</div>
+            <div>
+              <div class="info-key">Alergias</div>
+              <div class="info-val">Nenhuma registrada</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">📋</div>
+            <div>
+              <div class="info-key">Prontuário</div>
+              <div class="info-val">#0302 · UBS Centro</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Condições de saúde -->
+        <div class="section-head"><div class="section-title">Condições de saúde</div></div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="info-row">
+            <div class="info-icon">🤰</div>
+            <div>
+              <div class="info-key">Gestação</div>
+              <div class="info-val">28 semanas · Pré-natal em andamento</div>
+            </div>
+            <span class="tag tag-blue">Ativo</span>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">💊</div>
+            <div>
+              <div class="info-key">Medicamentos em uso</div>
+              <div class="info-val">Sulfato Ferroso 40mg · Ácido Fólico 5mg</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline de atendimentos -->
+        <div class="section-head"><div class="section-title">Histórico de atendimentos</div></div>
+        <div class="card">
+          <div class="tl">
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot blue"></div><div class="tl-line"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Pré-natal · 24 semanas</div>
+                <div class="tl-sub">PA: 120/80 · Peso: 68kg · Tudo normal</div>
+                <div class="tl-date">15/05/2026</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot green"></div><div class="tl-line"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Exames laboratoriais</div>
+                <div class="tl-sub">Hemograma · Glicemia · Resultados normais</div>
+                <div class="tl-date">15/05/2026</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-col"><div class="tl-dot orange"></div></div>
+              <div class="tl-content">
+                <div class="tl-title">Pré-natal · 20 semanas</div>
+                <div class="tl-sub">Ultrassom obstétrico realizado · Sexo: não revelado</div>
+                <div class="tl-date">10/04/2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-banner blue" style="margin-top:0.5rem">
+          <span class="alert-icon">ℹ️</span>
+          <div class="alert-text">Apenas informações autorizadas pela equipe de saúde estão visíveis neste portal.</div>
+        </div>
+      </div>
+    </div><!-- /view-prontuario -->
+
+    <!-- ══ VIEW: NOTIFICAÇÕES ══ -->
+    <div class="view" id="view-notificacoes">
+      <div class="page-header">
+        <div class="page-title">🔔 Notificações</div>
+        <div class="page-sub">Avisos e lembretes</div>
+      </div>
+      <div class="view-pad" style="padding-top:0">
+        <div class="card">
+          <div class="notif-item unread" onclick="markRead(this)">
+            <div class="notif-ava blue">📅</div>
+            <div style="flex:1">
+              <div class="notif-title">Consulta amanhã</div>
+              <div class="notif-sub">Pré-natal às 09:00 na UBS Centro. Lembre-se de trazer a carteirinha do pré-natal.</div>
+              <div class="notif-time">Hoje · 07:00</div>
+            </div>
+          </div>
+          <div class="notif-item unread" onclick="markRead(this)">
+            <div class="notif-ava green">🧪</div>
+            <div style="flex:1">
+              <div class="notif-title">Resultado disponível</div>
+              <div class="notif-sub">Seu Hemograma Completo está disponível para visualização.</div>
+              <div class="notif-time">Ontem · 14:32</div>
+            </div>
+          </div>
+          <div class="notif-item" onclick="markRead(this)">
+            <div class="notif-ava blue">💊</div>
+            <div style="flex:1">
+              <div class="notif-title">Nova receita emitida</div>
+              <div class="notif-sub">Dr. Marcos Silva emitiu uma nova receita: Sulfato Ferroso + Ácido Fólico.</div>
+              <div class="notif-time">25/05/2026</div>
+            </div>
+          </div>
+          <div class="notif-item" onclick="markRead(this)">
+            <div class="notif-ava orange">📢</div>
+            <div style="flex:1">
+              <div class="notif-title">Comunicado da UBS</div>
+              <div class="notif-sub">A UBS Centro estará funcionando em horário especial durante o feriado do dia 07/06.</div>
+              <div class="notif-time">24/05/2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-notificacoes -->
+
+    <!-- ══ VIEW: PERFIL ══ -->
+    <div class="view" id="view-perfil">
+      <div class="profile-hero">
+        <div class="profile-avatar-wrap" id="profileAvatar" onclick="showToast('📷 Foto de perfil', 'Em breve você poderá adicionar uma foto', 'blue')">?</div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-pron">Paciente · Pron. #0302 · UBS Centro</div>
+      </div>
+      <div class="view-pad">
+
+        <!-- Editar nome -->
+        <div class="section-head"><div class="section-title">Dados pessoais</div></div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Nome de exibição</label>
+              <input type="text" class="form-input" id="editNome" placeholder="Seu nome" autocapitalize="words">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefone de contato</label>
+              <input type="tel" class="form-input" placeholder="(11) 99999-9999" value="(11) 98765-4321">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">E-mail (opcional)</label>
+              <input type="email" class="form-input" placeholder="seu@email.com">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-bottom:1rem" onclick="saveProfile()">
+          💾 Salvar alterações
+        </button>
+
+        <!-- Configurações -->
+        <div class="section-head"><div class="section-title">Configurações</div></div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="info-row" style="cursor:pointer" onclick="showToast('🔔 Notificações', 'Configuração salva', 'green')">
+            <div class="info-icon">🔔</div>
+            <div style="flex:1">
+              <div class="info-key">Notificações</div>
+              <div class="info-val">Ativadas</div>
+            </div>
+            <span style="color:var(--text3);font-size:1rem">›</span>
+          </div>
+          <div class="info-row" style="cursor:pointer" onclick="showToast('🔒 Privacidade', 'Seus dados ficam apenas neste dispositivo', 'blue')">
+            <div class="info-icon">🔒</div>
+            <div style="flex:1">
+              <div class="info-key">Privacidade</div>
+              <div class="info-val">Dados locais apenas</div>
+            </div>
+            <span style="color:var(--text3);font-size:1rem">›</span>
+          </div>
+          <div class="info-row" style="cursor:pointer" onclick="showInstallInfo()">
+            <div class="info-icon">📱</div>
+            <div style="flex:1">
+              <div class="info-key">Instalar app</div>
+              <div class="info-val">Adicionar à tela inicial</div>
+            </div>
+            <span style="color:var(--text3);font-size:1rem">›</span>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-full" style="color:var(--red);border-color:var(--red-light)" onclick="sairApp()">
+          ← Sair do portal
+        </button>
+      </div>
+    </div><!-- /view-perfil -->
+
+  </div><!-- /app-scroll -->
+
+  <!-- ══ BOTTOM NAVIGATION ══ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="showView('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </button>
+    <button class="nav-item" id="nav-consultas" onclick="showView('consultas')">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">Consultas</span>
+    </button>
+    <button class="nav-item" id="nav-exames" onclick="showView('exames')">
+      <span class="nav-icon">🧪</span>
+      <span class="nav-label">Exames</span>
+      <span class="nav-badge"></span>
+    </button>
+    <button class="nav-item" id="nav-receitas" onclick="showView('receitas')">
+      <span class="nav-icon">💊</span>
+      <span class="nav-label">Receitas</span>
+    </button>
+    <button class="nav-item" id="nav-perfil" onclick="showView('perfil')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════════════════
+     MODAL SHEETS
+══════════════════════════════════════════════════ -->
+
+<!-- Detalhe consulta -->
+<div class="modal-overlay" id="consultaSheet">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">📅 Detalhes da Consulta</div>
+      <button class="sheet-close" onclick="closeSheet('consultaSheet')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div style="background:var(--orange-light);border-radius:12px;padding:1rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:center">
+        <div style="font-size:1.8rem">📅</div>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Hoje, 06/06/2026</div>
+          <div style="font-size:0.82rem;color:var(--text2)">às 09:00</div>
+        </div>
+        <span class="tag tag-orange" style="margin-left:auto">Hoje</span>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">🩺</div>
+        <div><div class="info-key">Tipo de consulta</div><div class="info-val">Pré-natal · 28 semanas</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">👨‍⚕️</div>
+        <div><div class="info-key">Médico responsável</div><div class="info-val">Dr. Marcos Silva · CRM-SP 789012</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">🏥</div>
+        <div><div class="info-key">Local</div><div class="info-val">UBS Centro · Rua da Saúde, 100</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">📋</div>
+        <div><div class="info-key">Observações</div><div class="info-val">Trazer carteirinha do pré-natal e exames anteriores</div></div>
+      </div>
+      <div style="margin-top:1.25rem;display:flex;gap:0.75rem">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="showToast('📍 Abrindo mapa...', 'UBS Centro · Rua da Saúde, 100', 'blue');closeSheet('consultaSheet')">📍 Ver local</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="showToast('✅ Consulta confirmada!', 'Lembrete ativado', 'green');closeSheet('consultaSheet')">✅ Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detalhe exame -->
+<div class="modal-overlay" id="exameSheet">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">🧪 Resultado do Exame</div>
+      <button class="sheet-close" onclick="closeSheet('exameSheet')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div style="background:var(--green-light);border-radius:12px;padding:1rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:center">
+        <div style="font-size:1.8rem">🧪</div>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Hemograma Completo</div>
+          <div style="font-size:0.82rem;color:var(--text2)">Resultado disponível</div>
+        </div>
+        <span class="tag tag-green" style="margin-left:auto">Normal</span>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">📅</div>
+        <div><div class="info-key">Data do resultado</div><div class="info-val">27/05/2026</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">👨‍⚕️</div>
+        <div><div class="info-key">Solicitado por</div><div class="info-val">Dr. Marcos Silva</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0">
+        <div class="info-icon">🏥</div>
+        <div><div class="info-key">Laboratório</div><div class="info-val">Labcenter · Unidade Centro</div></div>
+      </div>
+      <div class="info-row" style="padding-left:0;padding-right:0;border-bottom:none">
+        <div class="info-icon">📊</div>
+        <div>
+          <div class="info-key">Principais valores</div>
+          <div class="info-val">Hemoglobina: 12,4 g/dL · Hematócrito: 37% · Leucócitos: 7.200/mm³</div>
+        </div>
+      </div>
+      <div class="alert-banner green" style="margin-top:1rem">
+        <span class="alert-icon">✅</span>
+        <div class="alert-text">Todos os valores dentro da faixa de referência.</div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:1rem" onclick="showToast('📄 Resultado salvo!', 'PDF gerado com sucesso', 'blue');closeSheet('exameSheet')">
+        📥 Baixar resultado em PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Agendar consulta -->
+<div class="modal-overlay" id="agendarSheet">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">➕ Agendar Consulta</div>
+      <button class="sheet-close" onclick="closeSheet('agendarSheet')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de consulta</label>
+        <select class="form-select">
+          <option>Consulta Geral</option>
+          <option selected>Pré-natal</option>
+          <option>Retorno</option>
+          <option>Especialidade</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unidade de saúde</label>
+        <select class="form-select">
+          <option>UBS Centro (mais próxima)</option>
+          <option>UBS Norte</option>
+          <option>UBS Jardim</option>
+          <option>UBS Sul</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data preferida</label>
+        <input type="date" class="form-input" value="2026-06-10">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horário preferido</label>
+        <div class="time-slots">
+          <button class="time-slot active" onclick="selectTime(this)">08:00</button>
+          <button class="time-slot" onclick="selectTime(this)">09:00</button>
+          <button class="time-slot" onclick="selectTime(this)">10:00</button>
+          <button class="time-slot" onclick="selectTime(this)">14:00</button>
+          <button class="time-slot" onclick="selectTime(this)">15:00</button>
+          <button class="time-slot" onclick="selectTime(this)">16:00</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motivo (opcional)</label>
+        <textarea class="form-textarea" placeholder="Descreva brevemente o motivo da consulta..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="showToast('✅ Consulta agendada!', 'Confirmação enviada por SMS', 'green');closeSheet('agendarSheet')">
+        ✅ Confirmar agendamento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Receita antiga -->
+<div class="modal-overlay" id="receitaAntigaSheet">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">💊 Receita Digital</div>
+      <button class="sheet-close" onclick="closeSheet('receitaAntigaSheet')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="receita-strip">
+        <div><div class="receita-logo">DATUS · VALEN</div><div style="font-size:0.6rem;opacity:0.7">UBS Centro</div></div>
+        <div class="receita-num">RX #20260310-0184</div>
+      </div>
+      <div class="receita-field">
+        <div class="receita-lbl">Paciente</div>
+        <div class="receita-val" id="receitaAntigaPaciente">—</div>
+      </div>
+      <div class="receita-med-row">
+        <div style="font-size:1.2rem">💊</div>
+        <div>
+          <div class="receita-med-name">Vitamina D 1000UI</div>
+          <div class="receita-med-dose">1 cápsula ao dia · 90 dias</div>
+        </div>
+      </div>
+      <div class="receita-field" style="margin-top:0.75rem">
+        <div class="receita-lbl">Médico</div>
+        <div class="receita-val">Dr. Rafael Alves · CRM-SP 123456</div>
+      </div>
+      <div class="receita-valid">
+        <span>✅</span><span>Assinatura eletrônica válida</span>
+      </div>
+      <button class="btn btn-ghost btn-full" style="margin-top:1rem" onclick="closeSheet('receitaAntigaSheet')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST CONTAINER ══ -->
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SERVICE WORKER REGISTRATION
+══════════════════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════
+let patientName = '';
+let currentView = 'home';
+let deferredPrompt = null;
+
+// ══ ENTRADA ══
+function validateEntry() {
+  const val = document.getElementById('nomeInput').value.trim();
+  document.getElementById('entryBtn').disabled = val.length < 2;
+}
+
+function enterApp() {
+  const nome = document.getElementById('nomeInput').value.trim();
+  if (nome.length < 2) return;
+
+  patientName = nome;
+  localStorage.setItem('datusPatientName', nome);
+
+  // Animação de saída
+  const landing = document.getElementById('landing');
+  landing.style.transition = 'opacity 0.45s ease';
+  landing.style.opacity = '0';
+
+  setTimeout(() => {
+    landing.style.display = 'none';
+    initApp();
+  }, 450);
+}
+
+function initApp() {
+  applyName(patientName);
+  document.getElementById('app').classList.add('visible');
+  // Saudação por horário
+  const h = new Date().getHours();
+  const greeting = h < 12 ? 'Bom dia,' : h < 18 ? 'Boa tarde,' : 'Boa noite,';
+  document.getElementById('homeGreeting').textContent = greeting + ' 👋';
+  showView('home');
+}
+
+function applyName(nome) {
+  const initials = nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  // Topbar avatar
+  document.getElementById('topAvatar').textContent = initials;
+  // Home
+  document.getElementById('homeName').textContent = nome;
+  // Prontuário
+  document.getElementById('prontuarioNome').textContent = nome;
+  // Receitas
+  document.getElementById('receitaPaciente').textContent = nome;
+  document.getElementById('receitasSubtitle').textContent = 'Prescrições de ' + nome;
+  document.getElementById('prontuarioSubtitle').textContent = 'Informações de ' + nome;
+  // Receita antiga sheet
+  document.getElementById('receitaAntigaPaciente').textContent = nome;
+  // Perfil
+  document.getElementById('profileName').textContent = nome;
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('editNome').value = nome;
+}
+
+// ══ NAVEGAÇÃO ══
+function showView(viewId) {
+  // Mapear IDs curtos para IDs completos
+  const viewMap = {
+    'home': 'view-home',
+    'consultas': 'view-consultas',
+    'exames': 'view-exames',
+    'receitas': 'view-receitas',
+    'prontuario': 'view-prontuario',
+    'notificacoes': 'view-notificacoes',
+    'perfil': 'view-perfil',
+  };
+  const fullId = viewMap[viewId] || ('view-' + viewId);
+
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const v = document.getElementById(fullId);
+  if (v) v.classList.add('active');
+
+  // Nav items
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const navBtn = document.getElementById('nav-' + viewId);
+  if (navBtn) navBtn.classList.add('active');
+
+  currentView = viewId;
+  document.getElementById('appScroll').scrollTop = 0;
+}
+
+// ══ MODALS / SHEETS ══
+function openSheet(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeSheet(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ══ TOAST ══
+function showToast(title, sub, color) {
+  const container = document.getElementById('toast-container');
+  const icons = { green: '✅', blue: '🔔', orange: '⚠️', red: '🚨' };
+  const t = document.createElement('div');
+  t.className = 'toast ' + (color || 'blue');
+  t.innerHTML = `
+    <div class="toast-icon">${icons[color] || '🔔'}</div>
+    <div class="toast-text"><strong>${title}</strong>${sub ? '<span>'+sub+'</span>' : ''}</div>
+    <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.prepend(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-10px)'; t.style.transition = 'all 0.3s'; }, 3200);
+  setTimeout(() => t.remove(), 3600);
+}
+
+// ══ PERFIL ══
+function saveProfile() {
+  const newNome = document.getElementById('editNome').value.trim();
+  if (newNome.length >= 2) {
+    patientName = newNome;
+    localStorage.setItem('datusPatientName', newNome);
+    applyName(newNome);
+    showToast('✅ Perfil atualizado!', 'Nome alterado para ' + newNome, 'green');
+  } else {
+    showToast('⚠️ Nome inválido', 'Digite pelo menos 2 caracteres', 'orange');
+  }
+}
+
+function sairApp() {
+  if (confirm('Deseja sair do portal do paciente?')) {
+    localStorage.removeItem('datusPatientName');
+    document.getElementById('app').classList.remove('visible');
+    const landing = document.getElementById('landing');
+    landing.style.display = 'flex';
+    landing.style.opacity = '0';
+    document.getElementById('nomeInput').value = '';
+    document.getElementById('entryBtn').disabled = true;
+    setTimeout(() => { landing.style.opacity = '1'; }, 50);
+    patientName = '';
+  }
+}
+
+// ══ NOTIFICAÇÕES ══
+function markRead(el) {
+  el.classList.remove('unread');
+  // Checar se ainda há não lidas
+  const unread = document.querySelectorAll('.notif-item.unread').length;
+  if (unread === 0) document.getElementById('notifDot').style.display = 'none';
+}
+
+// ══ TIME SLOTS ══
+function selectTime(btn) {
+  btn.closest('.time-slots').querySelectorAll('.time-slot').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══ PWA INSTALL ══
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const bar = document.getElementById('installBar');
+  if (bar && !localStorage.getItem('installDismissed')) {
+    bar.classList.remove('hidden');
+  }
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        showToast('📱 App instalado!', 'DATUS Saúde adicionado à tela inicial', 'green');
+      }
+      deferredPrompt = null;
+      document.getElementById('installBar').classList.add('hidden');
+    });
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('installBar').classList.add('hidden');
+  localStorage.setItem('installDismissed', '1');
+}
+
+function showInstallInfo() {
+  if (deferredPrompt) {
+    installPWA();
+  } else {
+    showToast('📱 Instalar app', 'Use "Adicionar à tela inicial" no menu do navegador', 'blue');
+  }
+}
+
+// ══ SERVICE WORKER ══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ══ INIT: verificar sessão salva ══
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('datusPatientName');
+  if (saved && saved.length >= 2) {
+    document.getElementById('nomeInput').value = saved;
+    patientName = saved;
+    document.getElementById('landing').style.display = 'none';
+    initApp();
+  }
+});
+</script>
+</body>
+</html>
